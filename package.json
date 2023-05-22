@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "@headlessui/react": "^1.7.14",
+    "react-markdown": "^8.0.7",
+    "react-syntax-highlighter": "^15.5.0"
+  }
+}
