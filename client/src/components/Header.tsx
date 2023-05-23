@@ -22,14 +22,27 @@ export default function Header({ sidebarOpen, setSidebarOpen }: HeaderProps) {
           after:-translate-x-3 after:transition-all after:duration-300"
           ></div>
         </button>
-        <div className="flex items-center gap-14 ml-16 md:ml-20 ">
+        <div className="flex items-center gap-14 ml-16 md:ml-24 ">
           <h1 className="hidden lg:block uppercase font-bold tracking-[5px] ">
             markdown
           </h1>
           <div className="flex relative items-center gap-4 before:absolute before:content-[''] before:w-[1px] before:h-10 before:bg-gray before:-left-7 before:hidden lg:before:block">
             <img src={fileIcon} alt="file-icon" />
-            <span className="hidden">document name</span>
-            <span>welcome.md</span>
+            <div className="flex flex-col">
+              <label
+                htmlFor="doc-name"
+                className="hidden md:block text-light-gray-1 text-sm"
+              >
+                Document Name
+              </label>
+              <input
+                type="text"
+                name="doc-name"
+                id="doc-name"
+                value={'welcome.md'}
+                className=" bg-transparent outline-none caret-orange"
+              />
+            </div>
           </div>
         </div>
       </div>

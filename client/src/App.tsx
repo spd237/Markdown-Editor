@@ -8,6 +8,9 @@ import Sidebar from './components/Sidebar';
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [markdownOpen, setPreviewOpen] = useState(false);
+  const [markdownInput, setMarkdownInput] = useState('');
+
   return (
     <>
       <Sidebar sidebarOpen={sidebarOpen} />
@@ -18,8 +21,17 @@ function App() {
       >
         <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
         <main className="grid grid-cols-2">
-          <Markdown />
-          <Preview />
+          <Markdown
+            markdownInput={markdownInput}
+            setMarkdownInput={setMarkdownInput}
+            markdownOpen={markdownOpen}
+            setMarkdownOpen={setPreviewOpen}
+          />
+          <Preview
+            markdownInput={markdownInput}
+            markdownOpen={markdownOpen}
+            setMarkdownOpen={setPreviewOpen}
+          />
         </main>
       </div>
       <div

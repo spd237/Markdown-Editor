@@ -21,7 +21,15 @@ export default {
         'roboto-mono': ['"Roboto Mono"', 'sans-serif'],
         'roboto-slab': ['"Roboto Slab"', 'sans-serif'],
       },
+      typography: (theme) => ({
+        DEFAULT: {
+          css: {
+            '--tw-prose-bullets': theme('colors.orange'),
+          },
+        },
+      }),
     },
   },
-  plugins: [],
+  darkMode: 'class',
+  plugins: [require('@tailwindcss/typography')],
 };
