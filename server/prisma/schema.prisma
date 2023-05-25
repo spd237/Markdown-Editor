@@ -19,8 +19,8 @@ model User {
 
 model Document {
   id       String @id @default(uuid())
-  name     String @unique @db.VarChar(255)
-  content  String
-  authorID String
+  name     String @db.VarChar(255)
+  content  String? 
+  authorID String 
   author   User   @relation(fields: [authorID], references: [id])
 }

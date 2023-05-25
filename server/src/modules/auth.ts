@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 
 interface User {
@@ -7,33 +7,25 @@ interface User {
   username: string;
 }
 
-interface ExtendedRequest extends Request {
-  user?: string | jwt.JwtPayload;
-}
-
 const secret = process.env.JWT_SECRET as string;
 const saltRounds = 10;
 
-export function comparePasswords(password: string, hashedPass: string) {
+export const comparePasswords = (password: string, hashedPass: string) => {
   return bcrypt.compare(password, hashedPass);
-}
+};
 
-export function hashPassword(password: string) {
+export const hashPassword = (password: string) => {
   return bcrypt.hash(password, saltRounds);
-}
+};
 
-export function createJWT(user: User) {
+export const createJWT = (user: User) => {
   const token = jwt.sign({ id: user.id, username: user.username }, secret, {
     expiresIn: '1h',
   });
   return token;
-}
+};
 
-export function protect(
-  req: ExtendedRequest,
-  res: Response,
-  next: NextFunction
-) {
+export const protect = (req: Request, res: Response, next: NextFunction) => {
   const bearer = req.headers.authorization;
 
   if (!bearer) {
@@ -59,4 +51,4 @@ export function protect(
     res.json({ message: 'not valid token' });
     return;
   }
-}
+};
