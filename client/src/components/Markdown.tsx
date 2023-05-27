@@ -15,7 +15,7 @@ export default function Markdown({
     <section
       className={`${
         markdownOpen ? 'block' : 'hidden'
-      } h-[calc(100vh-50px)] bg:white dark:bg-almost-black border-r-2 border-r-very-light-gray dark:border-r-gray col-span-2 md:col-span-1`}
+      } h-[calc(100vh-50px)] bg:white dark:bg-almost-black md:border-r-2 md:border-r-very-light-gray md:dark:border-r-gray col-span-2 md:col-span-1 `}
     >
       <div
         className="bg-almost-white dark:bg-dark-gray-1 flex

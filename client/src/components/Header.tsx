@@ -8,7 +8,7 @@ type HeaderProps = {
 
 export default function Header({ sidebarOpen, setSidebarOpen }: HeaderProps) {
   return (
-    <header className=" bg-dark-gray-2 text-white relative flex items-center p-2 justify-between h-14 md:h-[72px]">
+    <header className="bg-dark-gray-2 text-white relative flex items-center p-2 justify-between h-14 md:h-[72px]">
       <div>
         <button
           className="absolute w-14 h-14 left-0 top-0 bg-dark-gray-3 hover:bg-orange md:h-[72px] md:w-[72px]"

@@ -1,46 +1,61 @@
-import { useState } from 'react';
-import Header from './components/Header';
-import Markdown from './components/Markdown';
-import Modal from './components/Modal';
-import Preview from './components/Preview';
-import Sidebar from './components/Sidebar';
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  QueryClient,
+} from '@tanstack/react-query';
+import './index.css';
+import { Routes, Route } from 'react-router-dom';
+import SignIn from './pages/SignIn';
+import SignUp from './pages/SignUp';
+import MainPage from './pages/MainPage';
+// import {
+//   getDocument,
+//   createDocument,
+//   updateDocument,
+//   deleteDocument,
+//   getAllDocuments,
+// } from './api/docApi';
 
 function App() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [markdownOpen, setPreviewOpen] = useState(false);
-  const [markdownInput, setMarkdownInput] = useState('');
+  const queryClient = useQueryClient();
+
+  // const { isLoading, isError, error, data } = useQuery({
+  //   queryKey: ['documents'],
+  //   queryFn: getAllDocuments,
+  // });
+
+  // const getOneDocument = useQuery({
+  //   queryKey: ['documents'],
+  // });
+
+  // const createDocumentMutation = useMutation({
+  //   mutationFn: createDocument,
+  //   onSuccess: () => {
+  //     queryClient.invalidateQueries(['documents']);
+  //   },
+  // });
+
+  // const updateDocumentMutation = useMutation({
+  //   mutationFn: updateDocument,
+  //   onSuccess: () => {
+  //     queryClient.invalidateQueries(['documents']);
+  //   },
+  // });
+
+  // const deleteDocumentMutation = useMutation({
+  //   mutationFn: deleteDocument,
+  //   onSuccess: () => {
+  //     queryClient.invalidateQueries(['documents']);
+  //   },
+  // });
 
   return (
-    <>
-      <Sidebar sidebarOpen={sidebarOpen} />
-      <div
-        className={`fixed w-full  transition-all duration-300 overflow-y-hidden ${
-          sidebarOpen ? 'overflow-x-hidden translate-x-64' : ''
-        }`}
-      >
-        <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-        <main className="grid grid-cols-2">
-          <Markdown
-            markdownInput={markdownInput}
-            setMarkdownInput={setMarkdownInput}
-            markdownOpen={markdownOpen}
-            setMarkdownOpen={setPreviewOpen}
-          />
-          <Preview
-            markdownInput={markdownInput}
-            markdownOpen={markdownOpen}
-            setMarkdownOpen={setPreviewOpen}
-          />
-        </main>
-      </div>
-      <div
-        className={`fixed top-0 z-10  h-screen w-[100%] items-center justify-center bg-light-gray-2/50 ${
-          modalOpen ? 'flex' : 'hidden'
-        }`}
-      ></div>
-      <Modal modalOpen={modalOpen} setModalOpen={setModalOpen} />
-    </>
+    <Routes>
+      <Route path="/signup" element={<SignUp />} />
+      <Route path="/signin" element={<SignIn />} />
+      <Route path="/markdown" element={<MainPage />} />
+    </Routes>
   );
 }
 

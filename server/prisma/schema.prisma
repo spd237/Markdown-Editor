@@ -19,7 +19,8 @@ model User {
 
 model Document {
   id       String @id @default(uuid())
-  name     String @db.VarChar(255)
+  name     String @db.VarChar(255) @default("untitled-document.md")
+  createdAt DateTime @default(now())
   content  String? 
   authorID String 
   author   User   @relation(fields: [authorID], references: [id])

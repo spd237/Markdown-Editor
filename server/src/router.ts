@@ -1,8 +1,7 @@
 import { Router } from 'express';
-import { Request, Response } from 'express';
-import { body } from 'express-validator';
-import { handleInputErrors, validateUpdates } from './modules/middleware';
+import { validateUpdates } from './modules/middleware';
 import {
+  getAllDocuments,
   createDocument,
   deleteDocument,
   getDocument,
@@ -11,15 +10,10 @@ import {
 
 const router = Router();
 
-router.get('/:document', getDocument);
-router.put('/:document', validateUpdates, updateDocument);
-router.post(
-  '/',
-  body('name').isString(),
-  body('content').optional(),
-  handleInputErrors,
-  createDocument
-);
-router.delete('/:document', deleteDocument);
+router.get('/', getAllDocuments);
+router.get('/:id', getDocument);
+router.put('/:id', validateUpdates, updateDocument);
+router.post('/', createDocument);
+router.delete('/:id', deleteDocument);
 
 export default router;
