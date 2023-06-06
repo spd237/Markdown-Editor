@@ -1,20 +1,25 @@
-import { useState } from 'react';
-import { useMutation } from '@tanstack/react-query';
+import { useState, useContext } from 'react';
+import { AuthContext } from '../App';
 import { signIn } from '../api/docApi';
-import { UserData } from '../types';
+import { useNavigate, Link } from 'react-router-dom';
 
 export default function SignIn() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-
-  const signInMutation = useMutation({
-    mutationFn: (userData: UserData) => signIn(userData),
-  });
+  const [error, setError] = useState('');
+  const { setToken } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const handleSignIn = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const userData = { username, password };
-    signInMutation.mutate(userData);
+    signIn({ username, password })
+      .then(({ data }) => {
+        setToken(data.token);
+        navigate('/markdown');
+      })
+      .catch((error) => {
+        setError(error.response.data.message);
+      });
   };
 
   return (
@@ -47,21 +52,21 @@ export default function SignIn() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              minLength={8}
+              // minLength={8}
               className=" outline-none bg-light-gray-1 px-2  caret-orange rounded-sm"
             />
           </div>
+        </div>
+        <div className="capitalize font-bold text-red-500 mt-6 text-center py-1 text-sm rounded-sm">
+          {error}
         </div>
         <button className="bg-orange mt-8 py-2 rounded-sm font-medium hover:bg-orange-hover w-full">
           Log In
         </button>
         <p className="text-center mt-6">
           Need an account?{' '}
-          <button
-            // onClick={() => setLogIn((prevLogin) => !prevLogin)}
-            className="underline text-orange  "
-          >
-            Sign Up
+          <button className="underline text-orange  ">
+            <Link to="/signup">Sign Up</Link>
           </button>{' '}
         </p>
       </form>

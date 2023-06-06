@@ -1,5 +1,38 @@
 import { NextFunction, Request, Response } from 'express';
 import prisma from '../db';
+import { welcomeText } from '../welcome';
+
+export const createWelcomeDoc = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = res.locals.userId;
+
+    if (userId) {
+      const existingDocument = await prisma.document.findFirst({
+        where: {
+          authorID: userId,
+          name: 'welcome.md',
+        },
+      });
+
+      if (!existingDocument) {
+        const welcomeDocument = await prisma.document.create({
+          data: {
+            name: 'welcome',
+            authorID: userId,
+            content: welcomeText,
+          },
+        });
+      }
+    }
+    next();
+  } catch (e) {
+    next(e);
+  }
+};
 
 export const getAllDocuments = async (
   req: Request,

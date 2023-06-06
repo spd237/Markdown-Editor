@@ -1,10 +1,5 @@
 import axios from 'axios';
-import { Document } from '../types';
-
-type UserData = {
-  username: string;
-  password: string;
-};
+import { DocumentType, UserData } from '../types';
 
 const API_URL = 'http://localhost:3000';
 
@@ -26,26 +21,65 @@ export const signUp = async ({ username, password }: UserData) => {
   });
 };
 
-export const getAllDocuments = async () => {
-  const response = await docApi.get('/markdown');
-  return response.data;
+export const getAllDocuments = async (
+  token: string | null
+): Promise<DocumentType[]> => {
+  const response = await docApi.get('/markdown', {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response.data.data;
 };
 
-export const getDocument = async (doc: Document) => {
-  const res = await docApi.get(`/markdown/${doc.id}`);
-  return res.data;
+export const getDocument = async (
+  id: string | undefined,
+  token: string | null
+): Promise<DocumentType> => {
+  const res = await docApi.get(`/markdown/${id}`, {
+    data: id,
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return res.data.data;
 };
 
-export const createDocument = async (doc: Document) => {
-  return await docApi.post('/markdown', doc);
+export const createDocument = async (token: string) => {
+  return await docApi.post('/markdown', null, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
 };
 
-export const updateDocument = async (doc: Document) => {
-  return await docApi.put(`/markdown/${doc.id}`, doc);
+export const updateDocumentName = async (
+  id: string | undefined,
+  fileName: string,
+  token: string | null
+) => {
+  console.log(token);
+  return await docApi.put(
+    `/markdown/${id}`,
+    { name: fileName },
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
 };
 
-export const deleteDocument = async (doc: Document) => {
-  return await docApi.delete(`/todos${doc.id}`, { data: { id: doc.id } });
+export const updateDocumentContent = async (
+  id: string | undefined,
+  content: string,
+  token: string | null
+) => {
+  return await docApi.put(
+    `/markdown/${id}`,
+    { content: content },
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+};
+
+export const deleteDocument = async (
+  id: string | undefined,
+  token: string | null
+) => {
+  return await docApi.delete(`/markdown/${id}`, {
+    data: { id: id },
+    headers: { Authorization: `Bearer ${token}` },
+  });
 };
 
 export default docApi;

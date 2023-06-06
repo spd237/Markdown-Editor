@@ -5,7 +5,7 @@ export interface User {
   documents: Document[];
 }
 
-export interface Document {
+export interface DocumentType {
   id: string;
   name: string;
   createdAt: string;
@@ -14,7 +14,7 @@ export interface Document {
   author: User;
 }
 
-export type UserData = {
+export interface UserData {
   username: string;
   password: string;
-};
+}

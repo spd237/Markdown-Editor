@@ -1,20 +1,25 @@
-import { useMutation } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { signUp } from '../api/docApi';
-import { UserData } from '../types';
+import { useNavigate, Link } from 'react-router-dom';
+import { AuthContext } from '../App';
 
 export default function SignUp() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-
-  const signUpMutation = useMutation({
-    mutationFn: (userData: UserData) => signUp(userData),
-  });
+  const [error, setError] = useState('');
+  const { token, setToken } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const handleSignUp = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const userData = { username, password };
-    signUpMutation.mutate(userData);
+    signUp({ username, password })
+      .then(({ data }) => {
+        setToken(data.token);
+        navigate('/markdown');
+      })
+      .catch((error) => {
+        setError(error.response.data.message);
+      });
   };
 
   return (
@@ -54,16 +59,18 @@ export default function SignUp() {
             />
           </div>
         </div>
+        <div className="capitalize font-bold text-red-500 mt-6 text-center py-1 text-sm rounded-sm">
+          {error}
+        </div>
         <button className="bg-orange mt-8 py-2 rounded-sm font-medium hover:bg-orange-hover w-full">
           Sign Up
         </button>
         <p className="text-center mt-6">
-          Already have an account{' '}
-          <button
-            // onClick={() => setLogIn((prevLogin) => !prevLogin)}
-            className="underline text-orange  "
-          >
-            Log In
+          Already have an account?{' '}
+          <button className="underline text-orange  ">
+            <Link to="/signin" replace>
+              Sign In
+            </Link>
           </button>{' '}
         </p>
       </form>

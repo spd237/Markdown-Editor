@@ -1,15 +1,17 @@
+import { DocumentType } from '../types';
+
 type MarkdownProps = {
-  markdownInput: string;
-  setMarkdownInput: React.Dispatch<React.SetStateAction<string>>;
   markdownOpen: boolean;
   setMarkdownOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  markdownContent?: string;
+  setMarkdownContent: React.Dispatch<React.SetStateAction<string>>;
 };
 
 export default function Markdown({
-  markdownInput,
-  setMarkdownInput,
   markdownOpen,
   setMarkdownOpen,
+  markdownContent,
+  setMarkdownContent,
 }: MarkdownProps) {
   return (
     <section
@@ -41,8 +43,10 @@ export default function Markdown({
       </div>
       <textarea
         className="font-roboto-mono text-dark-gray-3 dark:text-light-gray-2 p-4 pt-2  bg-inherit resize-none w-full outline-none h-[92.5%]"
-        value={markdownInput}
-        onChange={(e) => setMarkdownInput(e.target.value)}
+        value={markdownContent}
+        onChange={(e) => {
+          setMarkdownContent(e.target.value);
+        }}
       ></textarea>
     </section>
   );

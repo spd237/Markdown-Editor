@@ -15,8 +15,10 @@ export const signUp = async (
       },
     });
 
+    res.locals.userId = user.id;
     const token = createJWT(user);
     res.json({ token: token });
+    next();
   } catch (e: any) {
     e.type = 'input';
     next(e);

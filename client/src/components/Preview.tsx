@@ -1,15 +1,15 @@
 import ReactMarkdown from 'react-markdown';
 
 type PreviewProps = {
-  markdownInput: string;
   markdownOpen: boolean;
   setMarkdownOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  markdownContent?: string;
 };
 
 export default function Preview({
-  markdownInput,
   markdownOpen,
   setMarkdownOpen,
+  markdownContent,
 }: PreviewProps) {
   return (
     <section
@@ -59,7 +59,7 @@ export default function Preview({
           !markdownOpen ? 'max-w-2xl mx-auto' : 'min-w-full'
         } font-roboto-slab  text-dark-gray-3 dark:text-light-gray-2 p-6 overflow-y-auto h-[92.5%] prose dark:prose-h1:text-white dark:prose-h2:text-white prose-h2:font-light dark:prose-h3:text-white prose-h3:text-xl dark:prose-blockquote:bg-dark-gray-2 prose-blockquote:border-l-orange prose-blockquote:text-dark-gray-3 dark:prose-blockquote:text-white prose-blockquote:not-italic prose-blockquote:font-bold prose-blockquote:font-roboto-slab prose-blockquote:p-4 prose-blockquote:bg-almost-white prose-a:text-dark-gray-3 dark:prose-a:text-white prose-a:underline dark:prose-h4:text-white prose-h4:text-lg dark:prose-h5:text-white prose-h5:font-bold prose-h5:text-base prose-h6:text-orange prose-h6:font-medium prose-code:text-dark-gray-3 dark:prose-code:text-white prose-pre:bg-almost-white dark:prose-pre:bg-dark-gray-2 prose-pre:text-lg`}
       >
-        {markdownInput}
+        {markdownContent}
       </ReactMarkdown>
     </section>
   );

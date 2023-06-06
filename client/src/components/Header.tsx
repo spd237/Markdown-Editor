@@ -1,12 +1,58 @@
+import { useNavigate, useParams } from 'react-router-dom';
 import fileIcon from '../assets/icon-document.svg';
 import saveIcon from '../assets/icon-save.svg';
+import { useContext } from 'react';
+import { AuthContext } from '../App';
+import { deleteDocument, updateDocumentName } from '../api/docApi';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 type HeaderProps = {
   sidebarOpen: boolean;
   setSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  fileName: string;
+  setFileName: React.Dispatch<React.SetStateAction<string>>;
 };
 
-export default function Header({ sidebarOpen, setSidebarOpen }: HeaderProps) {
+export default function Header({
+  sidebarOpen,
+  setSidebarOpen,
+  fileName,
+  setFileName,
+}: HeaderProps) {
+  const { id } = useParams();
+  const { token } = useContext(AuthContext);
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  const fileNameMutation = useMutation({
+    mutationFn: ({
+      id,
+      name,
+      token,
+    }: {
+      id: string | undefined;
+      name: string;
+      token: string | null;
+    }) => updateDocumentName(id, name, token),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['documents']);
+    },
+  });
+
+  const deleteDocumentMutation = useMutation({
+    mutationFn: ({
+      id,
+      token,
+    }: {
+      id: string | undefined;
+      token: string | null;
+    }) => deleteDocument(id, token),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['documents']);
+      navigate('/markdown');
+    },
+  });
+
   return (
     <header className="bg-dark-gray-2 text-white relative flex items-center p-2 justify-between h-14 md:h-[72px]">
       <div>
@@ -39,15 +85,21 @@ export default function Header({ sidebarOpen, setSidebarOpen }: HeaderProps) {
                 type="text"
                 name="doc-name"
                 id="doc-name"
-                value={'welcome.md'}
-                className=" bg-transparent outline-none caret-orange"
+                value={fileName}
+                onChange={(e) => setFileName(e.target.value)}
+                className=" bg-transparent outline-none caret-orange focus:border-b focus:border-b-almost-white"
               />
             </div>
           </div>
         </div>
       </div>
       <div className="flex items-center gap-6">
-        <button>
+        <button
+          onClick={() => {
+            deleteDocumentMutation.mutate({ id: id, token: token });
+            setFileName('');
+          }}
+        >
           <svg
             width="18"
             height="20"
@@ -61,7 +113,12 @@ export default function Header({ sidebarOpen, setSidebarOpen }: HeaderProps) {
             />
           </svg>
         </button>
-        <button className="bg-orange p-3 rounded hover:bg-orange-hover flex items-center gap-3">
+        <button
+          onClick={() =>
+            fileNameMutation.mutate({ id: id, name: fileName, token: token })
+          }
+          className="bg-orange p-3 rounded hover:bg-orange-hover flex items-center gap-3"
+        >
           <img src={saveIcon} alt="save-icon" />
           <span className="hidden md:block">Save Changes</span>
         </button>

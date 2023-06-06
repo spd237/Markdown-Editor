@@ -9,6 +9,7 @@ import router from './router';
 import cors from 'cors';
 import { protect } from './modules/auth';
 import { signIn, signUp } from './handlers/user';
+import { createWelcomeDoc } from './handlers/document';
 
 const app: Express = express();
 
@@ -18,7 +19,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/markdown', protect, router);
 
-app.post('/signup', signUp);
+app.post('/signup', signUp, createWelcomeDoc);
 app.post('/signin', signIn);
 
 app.use((error: any, req: Request, res: Response, next: NextFunction) => {

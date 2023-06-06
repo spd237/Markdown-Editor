@@ -1,11 +1,36 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { Switch } from '@headlessui/react';
-import fileIcon from '../assets/icon-document.svg';
+import { DocumentType } from '../types';
 import sunIcon from '../assets/icon-light-mode.svg';
 import moonIcon from '../assets/icon-dark-mode.svg';
+import Document from './Document';
+import { AuthContext } from '../App';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { createDocument } from '../api/docApi';
 
-export default function Sidebar({ sidebarOpen }: { sidebarOpen: boolean }) {
+type SidebarProps = {
+  sidebarOpen: boolean;
+  data?: DocumentType[];
+  setFileName: React.Dispatch<React.SetStateAction<string>>;
+};
+
+export default function Sidebar({
+  sidebarOpen,
+  data,
+  setFileName,
+}: SidebarProps) {
   const [enabled, setEnabled] = useState(false);
+  const { token } = useContext(AuthContext);
+
+  const queryClient = useQueryClient();
+
+  const createDocumentMutation = useMutation({
+    mutationFn: (token: string) => createDocument(token),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['documents']);
+    },
+  });
+
   return (
     <aside
       className={`fixed top-0 min-h-screen z-10 bg-dark-gray-1 p-6 flex flex-col transition-all duration-300 ${
@@ -18,26 +43,30 @@ export default function Sidebar({ sidebarOpen }: { sidebarOpen: boolean }) {
       <h2 className=" text-light-gray-1 uppercase tracking-[2px] text-sm my-6 lg:mt-0">
         my documents
       </h2>
-      <button className="bg-orange text-white rounded px-11 py-3 hover:bg-orange-hover">
+      <button
+        className="bg-orange text-white rounded px-11 py-3 hover:bg-orange-hover"
+        onClick={() => createDocumentMutation.mutate(token ?? '')}
+      >
         + New Document
       </button>
       <nav className="mt-6 flex flex-col gap-6 ">
-        <div className="flex items-center gap-4">
-          <img src={fileIcon} alt="file-icon" />
-          <div className="flex flex-col">
-            <span className="text-light-gray-1">01 April 2022</span>
-            <span className="text-white">untitled-document.md</span>
-          </div>
-        </div>
-        <div className="flex items-center gap-4">
-          <img src={fileIcon} alt="file-icon" />
-          <div className="flex flex-col">
-            <span className="text-light-gray-1">01 April 2022</span>
-            <span className="text-white">welcome.md</span>
-          </div>
-        </div>
+        {data?.map((doc) => {
+          return (
+            <Document
+              key={doc.id}
+              id={doc.id}
+              createdAt={doc.createdAt}
+              name={doc.name}
+              content={doc.content}
+              setFileName={setFileName}
+            />
+          );
+        })}
       </nav>
-      <div className="mt-auto flex items-center gap-3">
+      <button className="mt-auto bg-orange text-white mb-10 rounded py-2 hover:bg-orange-hover text-lg ">
+        Sign Out
+      </button>
+      <div className="flex items-center gap-3">
         <img src={moonIcon} alt="dark-mode" />
         <Switch
           checked={enabled}
