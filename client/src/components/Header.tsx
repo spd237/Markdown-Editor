@@ -1,9 +1,9 @@
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import fileIcon from '../assets/icon-document.svg';
 import saveIcon from '../assets/icon-save.svg';
 import { useContext } from 'react';
-import { AuthContext } from '../App';
-import { deleteDocument, updateDocumentName } from '../api/docApi';
+import { AuthContext, MarkdownContext } from '../App';
+import { updateDocumentName, updateDocumentContent } from '../api/docApi';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 type HeaderProps = {
@@ -11,6 +11,7 @@ type HeaderProps = {
   setSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
   fileName: string;
   setFileName: React.Dispatch<React.SetStateAction<string>>;
+  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export default function Header({
@@ -18,11 +19,12 @@ export default function Header({
   setSidebarOpen,
   fileName,
   setFileName,
+  setModalOpen,
 }: HeaderProps) {
   const { id } = useParams();
   const { token } = useContext(AuthContext);
+  const { markdownContent } = useContext(MarkdownContext);
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
 
   const fileNameMutation = useMutation({
     mutationFn: ({
@@ -39,19 +41,33 @@ export default function Header({
     },
   });
 
-  const deleteDocumentMutation = useMutation({
+  const markdownContentMutation = useMutation({
     mutationFn: ({
       id,
+      content,
       token,
     }: {
       id: string | undefined;
+      content: string;
       token: string | null;
-    }) => deleteDocument(id, token),
-    onSuccess: () => {
-      queryClient.invalidateQueries(['documents']);
-      navigate('/markdown');
+    }) => updateDocumentContent(id, content, token),
+    onSuccess: (data) => {
+      queryClient.setQueryData(['documents', id], data);
     },
   });
+
+  const handleMutations = () => {
+    if (fileName) {
+      fileNameMutation.mutate({ id: id, name: fileName, token: token });
+    }
+    if (markdownContent) {
+      markdownContentMutation.mutate({
+        id: id,
+        content: markdownContent,
+        token: token,
+      });
+    }
+  };
 
   return (
     <header className="bg-dark-gray-2 text-white relative flex items-center p-2 justify-between h-14 md:h-[72px]">
@@ -94,12 +110,7 @@ export default function Header({
         </div>
       </div>
       <div className="flex items-center gap-6">
-        <button
-          onClick={() => {
-            deleteDocumentMutation.mutate({ id: id, token: token });
-            setFileName('');
-          }}
-        >
+        <button onClick={() => setModalOpen(true)}>
           <svg
             width="18"
             height="20"
@@ -114,9 +125,8 @@ export default function Header({
           </svg>
         </button>
         <button
-          onClick={() =>
-            fileNameMutation.mutate({ id: id, name: fileName, token: token })
-          }
+          disabled={fileNameMutation.isLoading}
+          onClick={handleMutations}
           className="bg-orange p-3 rounded hover:bg-orange-hover flex items-center gap-3"
         >
           <img src={saveIcon} alt="save-icon" />

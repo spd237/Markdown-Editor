@@ -1,12 +1,15 @@
 import { useState, useContext } from 'react';
 import { Switch } from '@headlessui/react';
 import { DocumentType } from '../types';
+import useLocalStorage from '../hooks/useLocalStorage';
+import useThemeSwitch from '../hooks/useThemeSwitch';
 import sunIcon from '../assets/icon-light-mode.svg';
 import moonIcon from '../assets/icon-dark-mode.svg';
 import Document from './Document';
 import { AuthContext } from '../App';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createDocument } from '../api/docApi';
+import { useNavigate } from 'react-router-dom';
 
 type SidebarProps = {
   sidebarOpen: boolean;
@@ -19,8 +22,10 @@ export default function Sidebar({
   data,
   setFileName,
 }: SidebarProps) {
-  const [enabled, setEnabled] = useState(false);
-  const { token } = useContext(AuthContext);
+  const [theme, setTheme] = useThemeSwitch();
+  const [enabled, setEnabled] = useLocalStorage('checked', false);
+  const { token, setToken } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const queryClient = useQueryClient();
 
@@ -30,6 +35,16 @@ export default function Sidebar({
       queryClient.invalidateQueries(['documents']);
     },
   });
+
+  const handleThemeSwitch = () => {
+    setEnabled(enabled === false ? true : false);
+    setTheme(theme === 'light' ? 'dark' : 'light');
+  };
+
+  const handleSignOut = () => {
+    setToken(null);
+    navigate('/signin');
+  };
 
   return (
     <aside
@@ -44,6 +59,7 @@ export default function Sidebar({
         my documents
       </h2>
       <button
+        disabled={createDocumentMutation.isLoading}
         className="bg-orange text-white rounded px-11 py-3 hover:bg-orange-hover"
         onClick={() => createDocumentMutation.mutate(token ?? '')}
       >
@@ -63,14 +79,17 @@ export default function Sidebar({
           );
         })}
       </nav>
-      <button className="mt-auto bg-orange text-white mb-10 rounded py-2 hover:bg-orange-hover text-lg ">
+      <button
+        className="mt-auto bg-orange text-white mb-10 rounded py-2 hover:bg-orange-hover text-lg "
+        onClick={handleSignOut}
+      >
         Sign Out
       </button>
       <div className="flex items-center gap-3">
         <img src={moonIcon} alt="dark-mode" />
         <Switch
           checked={enabled}
-          onChange={() => setEnabled(!enabled)}
+          onChange={handleThemeSwitch}
           className={
             ' relative inline-flex h-5 w-10 items-center rounded-full bg-gray'
           }

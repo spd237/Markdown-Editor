@@ -1,16 +1,18 @@
 import ReactMarkdown from 'react-markdown';
+import { useContext } from 'react';
+import { MarkdownContext } from '../App';
 
 type PreviewProps = {
   markdownOpen: boolean;
   setMarkdownOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  markdownContent?: string;
 };
 
 export default function Preview({
   markdownOpen,
   setMarkdownOpen,
-  markdownContent,
 }: PreviewProps) {
+  const { markdownContent } = useContext(MarkdownContext);
+
   return (
     <section
       className={`bg:white dark:bg-almost-black h-[calc(100vh-50px)] font ${

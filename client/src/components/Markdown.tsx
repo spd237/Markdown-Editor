@@ -1,18 +1,23 @@
-import { DocumentType } from '../types';
+// import { useQueryClient, useMutation } from '@tanstack/react-query';
+// import { updateDocumentContent } from '../api/docApi';
+// import { AuthContext } from '../App';
+// import { useParams } from 'react-router-dom';
+// import { debounce } from 'lodash';
+
+import { useContext } from 'react';
+import { MarkdownContext } from '../App';
 
 type MarkdownProps = {
   markdownOpen: boolean;
   setMarkdownOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  markdownContent?: string;
-  setMarkdownContent: React.Dispatch<React.SetStateAction<string>>;
 };
 
 export default function Markdown({
   markdownOpen,
   setMarkdownOpen,
-  markdownContent,
-  setMarkdownContent,
 }: MarkdownProps) {
+  const { markdownContent, setMarkdownContent } = useContext(MarkdownContext);
+
   return (
     <section
       className={`${

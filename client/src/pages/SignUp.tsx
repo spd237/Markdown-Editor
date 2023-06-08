@@ -7,7 +7,8 @@ export default function SignUp() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const { token, setToken } = useContext(AuthContext);
+
+  const { setToken } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleSignUp = (e: React.FormEvent<HTMLFormElement>) => {

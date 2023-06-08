@@ -51,8 +51,7 @@ export const updateDocumentName = async (
   id: string | undefined,
   fileName: string,
   token: string | null
-) => {
-  console.log(token);
+): Promise<DocumentType> => {
   return await docApi.put(
     `/markdown/${id}`,
     { name: fileName },
@@ -64,7 +63,7 @@ export const updateDocumentContent = async (
   id: string | undefined,
   content: string,
   token: string | null
-) => {
+): Promise<DocumentType> => {
   return await docApi.put(
     `/markdown/${id}`,
     { content: content },

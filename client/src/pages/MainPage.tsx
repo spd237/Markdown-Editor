@@ -2,21 +2,17 @@ import Header from '../components/Header';
 import Modal from '../components/Modal';
 import Sidebar from '../components/Sidebar';
 import { useContext } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getAllDocuments, updateDocumentName } from '../api/docApi';
-import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { getAllDocuments } from '../api/docApi';
+import { useState } from 'react';
 import { AuthContext } from '../App';
 import Content from '../components/Content';
-import { useParams } from 'react-router-dom';
 
 export default function MainPage() {
-  const { id } = useParams();
   const { token } = useContext(AuthContext);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [fileName, setFileName] = useState('');
-
-  const queryClient = useQueryClient();
 
   const { data } = useQuery({
     queryKey: ['documents', token],
@@ -26,21 +22,6 @@ export default function MainPage() {
       } else return getAllDocuments(token);
     },
   });
-
-  // const updateNameMutation = useMutation({
-  //   mutationFn: ({
-  //     id,
-  //     fileName,
-  //     token,
-  //   }: {
-  //     id: string;
-  //     fileName: string;
-  //     token: string;
-  //   }) => updateDocumentName(id, fileName, token),
-  //   onSuccess: () => {
-  //     queryClient.invalidateQueries(['documents']);
-  //   },
-  // });
 
   return (
     <>
@@ -59,6 +40,7 @@ export default function MainPage() {
           setSidebarOpen={setSidebarOpen}
           fileName={fileName}
           setFileName={setFileName}
+          setModalOpen={setModalOpen}
         />
         <main className="grid grid-cols-2 ">
           <Content />
@@ -69,7 +51,12 @@ export default function MainPage() {
           modalOpen ? 'flex' : 'hidden'
         }`}
       ></div>
-      <Modal modalOpen={modalOpen} setModalOpen={setModalOpen} />
+      <Modal
+        modalOpen={modalOpen}
+        setModalOpen={setModalOpen}
+        fileName={fileName}
+        setFileName={setFileName}
+      />
     </>
   );
 }

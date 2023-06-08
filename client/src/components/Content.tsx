@@ -1,39 +1,18 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import Markdown from './Markdown';
 import Preview from './Preview';
 import { useState, useContext, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
-import { AuthContext } from '../App';
-import { getDocument, updateDocumentContent } from '../api/docApi';
+import { useQuery } from '@tanstack/react-query';
+import { AuthContext, MarkdownContext } from '../App';
+import { getDocument } from '../api/docApi';
 
 export default function Content() {
   const { id } = useParams();
   const { token } = useContext(AuthContext);
   const [markdownOpen, setMarkdownOpen] = useState(true);
-  const [markdownContent, setMarkdownContent] = useState('');
-
-  const queryClient = useQueryClient();
-
-  const markdownContentMutation = useMutation({
-    mutationFn: ({
-      id,
-      content,
-      token,
-    }: {
-      id: string | undefined;
-      content: string;
-      token: string | null;
-    }) => updateDocumentContent(id, content, token),
-    onSuccess: (data) => {
-      queryClient.setQueryData(['documents', id], data);
-    },
-  });
-
-  // markdownContentMutation.mutate({
-  //   id: id,
-  //   content: markdownContent,
-  //   token: token,
-  // });
+  const { setMarkdownContent } = useContext(MarkdownContext);
 
   const { data } = useQuery({
     queryKey: ['documents', id, token],
@@ -51,17 +30,8 @@ export default function Content() {
 
   return (
     <>
-      <Markdown
-        markdownOpen={markdownOpen}
-        setMarkdownOpen={setMarkdownOpen}
-        markdownContent={markdownContent}
-        setMarkdownContent={setMarkdownContent}
-      />
-      <Preview
-        markdownOpen={markdownOpen}
-        setMarkdownOpen={setMarkdownOpen}
-        markdownContent={markdownContent}
-      />
+      <Markdown markdownOpen={markdownOpen} setMarkdownOpen={setMarkdownOpen} />
+      <Preview markdownOpen={markdownOpen} setMarkdownOpen={setMarkdownOpen} />
     </>
   );
 }
